@@ -309,7 +309,12 @@ namespace Xamarin.Forms
 		{
 			var index = _navStack.IndexOf(before);
 			if (index == -1)
-				throw new ArgumentException("Page not found in nav stack");
+			{
+				if (_navStack.Count == 1)
+					index = 0;
+				else
+					throw new ArgumentException("Page not found in nav stack");
+			}
 
 			var stack = _navStack.ToList();
 			stack.Insert(index, page);
