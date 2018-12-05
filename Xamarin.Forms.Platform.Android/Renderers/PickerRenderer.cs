@@ -1,5 +1,4 @@
 using Android.App;
-using Android.Content.Res;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
@@ -7,12 +6,9 @@ using System;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
-using ADatePicker = Android.Widget.DatePicker;
-using ATimePicker = Android.Widget.TimePicker;
 using Object = Java.Lang.Object;
 using Orientation = Android.Widget.Orientation;
 using Android.Content;
-using Xamarin.Forms.PlatformConfiguration.AndroidSpecific;
 using System.Collections.Generic;
 using Android.Text;
 
@@ -71,13 +67,17 @@ namespace Xamarin.Forms.Platform.Android
 					textField.SetOnClickListener(PickerListener.Instance);
 					textField.InputType = InputTypes.Null;
 					textField.KeyPress += TextFieldKeyPress;
+					textField.ContentDescription = nameof(Picker);
 
 					var useLegacyColorManagement = e.NewElement.UseLegacyColorManagement();
 					_textColorSwitcher = new TextColorSwitcher(textField.TextColors, useLegacyColorManagement);
 
+					if (e.NewElement.GetValue(AutomationProperties.NameProperty) == null && e.NewElement.GetValue(AutomationProperties.HelpTextProperty) == null)
+						e.NewElement.SetValue(AutomationProperties.NameProperty, nameof(Picker));
+
 					SetNativeControl(textField);
 				}
-				
+
 				UpdateFont();
 				UpdatePicker();
 				UpdateTextColor();

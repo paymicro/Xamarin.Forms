@@ -1,5 +1,4 @@
 using Android.App;
-using Android.Content.Res;
 using Android.Text;
 using Android.Util;
 using Android.Widget;
@@ -9,7 +8,6 @@ using System.ComponentModel;
 using System.Linq;
 using Android.Content;
 using Object = Java.Lang.Object;
-using Xamarin.Forms.PlatformConfiguration.AndroidSpecific;
 using System.Collections.Generic;
 using Android.Views;
 
@@ -70,10 +68,14 @@ namespace Xamarin.Forms.Platform.Android.AppCompat
 					textField.InputType = InputTypes.Null;
 					textField.KeyPress += TextFieldKeyPress;
 					textField.SetOnClickListener(PickerListener.Instance);
+					textField.ContentDescription = nameof(Picker);
 
 					var useLegacyColorManagement = e.NewElement.UseLegacyColorManagement();
 					_textColorSwitcher = new TextColorSwitcher(textField.TextColors, useLegacyColorManagement);
-					
+
+					if (e.NewElement.GetValue(AutomationProperties.NameProperty) == null && e.NewElement.GetValue(AutomationProperties.HelpTextProperty) == null)
+						e.NewElement.SetValue(AutomationProperties.NameProperty, nameof(Picker));
+
 					SetNativeControl(textField);
 				}
 				UpdateFont();
