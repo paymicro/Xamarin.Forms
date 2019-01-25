@@ -11,7 +11,7 @@ namespace Xamarin.Forms.Platform.Android
 {
 	public class SliderRenderer : ViewRenderer<Slider, SeekBar>, SeekBar.IOnSeekBarChangeListener
 	{
-		double _max, _min;
+		double _max, _min, _value;
 		bool _isTrackingChange;
 		ColorStateList defaultprogresstintlist, defaultprogressbackgroundtintlist;
 		ColorFilter defaultthumbcolorfilter;
@@ -32,14 +32,20 @@ namespace Xamarin.Forms.Platform.Android
 
 		double Value
 		{
-			get { return _min + (_max - _min) * (Control.Progress / 1000.0); }
-			set { Control.Progress = (int)((value - _min) / (_max - _min) * 1000.0); }
+			get => _value;
+			set {
+				_value = value;
+				Control.Progress = (int)((_value - _min) / (_max - _min) * Control.Max);
+			}
 		}
 
 		void SeekBar.IOnSeekBarChangeListener.OnProgressChanged(SeekBar seekBar, int progress, bool fromUser)
 		{
 			if (_isTrackingChange)
+			{
+				_value = _min + (_max - _min) * ((double)progress / seekBar.Max);
 				((IElementController)Element).SetValueFromRenderer(Slider.ValueProperty, Value);
+			}
 		}
 
 		void SeekBar.IOnSeekBarChangeListener.OnStartTrackingTouch(SeekBar seekBar)
@@ -67,7 +73,6 @@ namespace Xamarin.Forms.Platform.Android
 			{
 				var seekBar = CreateNativeControl();
 				SetNativeControl(seekBar);
-
 				seekBar.Max = 1000;
 				seekBar.SetOnSeekBarChangeListener(this);
 
